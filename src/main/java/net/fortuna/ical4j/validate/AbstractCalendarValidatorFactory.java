@@ -9,7 +9,13 @@ public abstract class AbstractCalendarValidatorFactory {
 
     private static CalendarValidatorFactory instance;
     static {
-        instance = ServiceLoader.load(CalendarValidatorFactory.class).iterator().next();
+        ClassLoader currentCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(AbstractCalendarValidatorFactory.class.getClassLoader());
+            instance = ServiceLoader.load(CalendarValidatorFactory.class).iterator().next();
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentCl);
+        }
     }
 
     public static CalendarValidatorFactory getInstance() {
